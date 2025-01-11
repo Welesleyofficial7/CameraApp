@@ -10,3 +10,4 @@ class CameraApplication : Application(), CameraXConfig.Provider {
             .build()
     }
 }
+

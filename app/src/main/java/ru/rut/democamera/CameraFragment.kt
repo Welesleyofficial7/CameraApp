@@ -96,25 +96,25 @@ class CameraFragment : Fragment() {
 //    }
 
     private fun startCamera() {
-        val preview = Preview.Builder().build().also {
-            it.setSurfaceProvider(binding.preview.surfaceProvider)
-        }
-
-        val recorder = Recorder.Builder()
-            .setQualitySelector(QualitySelector.from(Quality.HIGHEST))
-            .build()
-        videoCapture = VideoCapture.withOutput(recorder)
-
-        val rotation = requireActivity().windowManager.defaultDisplay.rotation
-
-        imageCapture = ImageCapture.Builder()
-            .setTargetRotation(rotation)
-            .build()
-
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
         cameraProviderFuture.addListener({
             val cameraProvider = cameraProviderFuture.get()
             try {
                 cameraProvider.unbindAll()
+
+                val preview = Preview.Builder().build().also {
+                    it.setSurfaceProvider(binding.preview.surfaceProvider)
+                }
+
+                imageCapture = ImageCapture.Builder()
+                    .setTargetRotation(binding.preview.display.rotation)
+                    .build()
+
+                val recorder = Recorder.Builder()
+                    .setQualitySelector(QualitySelector.from(Quality.HIGHEST))
+                    .build()
+
+                videoCapture = VideoCapture.withOutput(recorder)
 
                 cameraProvider.bindToLifecycle(
                     viewLifecycleOwner,
@@ -124,10 +124,11 @@ class CameraFragment : Fragment() {
                     videoCapture
                 )
             } catch (e: Exception) {
-                Log.e("TAG", "Use case binding failed", e)
+                Log.e("CameraFragment", "Use case binding failed", e)
             }
         }, ContextCompat.getMainExecutor(requireContext()))
     }
+
 
 
     private fun requestCameraPermission() {
