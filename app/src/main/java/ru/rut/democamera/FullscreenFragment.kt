@@ -2,29 +2,39 @@ package ru.rut.democamera
 
 import android.net.Uri
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
-import ru.rut.democamera.databinding.ActivityFullscreenBinding
+import ru.rut.democamera.databinding.FragmentFullscreenBinding
 import java.io.File
 
-class FullscreenActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityFullscreenBinding
+class FullscreenFragment : Fragment() {
+    private var _binding: FragmentFullscreenBinding? = null
+    private val binding get() = _binding!!
     private var player: ExoPlayer? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityFullscreenBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentFullscreenBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        val filePath = intent.getStringExtra("file_path") ?: return
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val filePath = arguments?.getString("file_path") ?: return
         val file = File(filePath)
 
         if (file.extension.equals("mp4", ignoreCase = true)) {
             binding.fullscreenPlayerView.visibility = View.VISIBLE
-            player = ExoPlayer.Builder(this).build()
+            player = ExoPlayer.Builder(requireContext()).build()
             binding.fullscreenPlayerView.player = player
 
             val mediaItem = MediaItem.fromUri(Uri.fromFile(file))
@@ -39,13 +49,14 @@ class FullscreenActivity : AppCompatActivity() {
         }
 
         binding.closeButton.setOnClickListener {
-            finish()
+            requireActivity().onBackPressedDispatcher.onBackPressed()
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         player?.release()
         player = null
+        _binding = null
     }
 }

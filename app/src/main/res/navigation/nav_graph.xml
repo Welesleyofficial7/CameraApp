@@ -3,26 +3,36 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/FirstFragment">
+    app:startDestination="@id/CameraFragment">
 
     <fragment
-        android:id="@+id/FirstFragment"
-        android:name="ru.rut.democamera.FirstFragment"
-        android:label="@string/first_fragment_label"
-        tools:layout="@layout/fragment_first">
-
+        android:id="@+id/CameraFragment"
+        android:name="ru.rut.democamera.CameraFragment"
+        android:label="@string/camera_fragment_label"
+        tools:layout="@layout/fragment_camera">
         <action
-            android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
+            android:id="@+id/action_CameraFragment_to_GalleryFragment"
+            app:destination="@id/GalleryFragment" />
     </fragment>
+
     <fragment
-        android:id="@+id/SecondFragment"
-        android:name="ru.rut.democamera.SecondFragment"
-        android:label="@string/second_fragment_label"
-        tools:layout="@layout/fragment_second">
-
+        android:id="@+id/GalleryFragment"
+        android:name="ru.rut.democamera.GalleryFragment"
+        android:label="@string/gallery_fragment_label"
+        tools:layout="@layout/fragment_gallery" >
         <action
-            android:id="@+id/action_SecondFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
+            android:id="@+id/action_GalleryFragment_to_FullscreenFragment"
+            app:destination="@id/FullscreenFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/FullscreenFragment"
+        android:name="ru.rut.democamera.FullscreenFragment"
+        android:label="@string/fullscreen_fragment_label"
+        tools:layout="@layout/fragment_fullscreen">
+        <argument
+            android:name="file_path"
+            app:argType="string" />
+    </fragment>
+
 </navigation>
