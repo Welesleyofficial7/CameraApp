@@ -1,11 +1,12 @@
 package ru.rut.democamera
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -31,13 +32,19 @@ class GalleryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupToolbar()
+
         val directory = File(requireContext().externalMediaDirs[0].absolutePath)
         files = directory.listFiles()?.toList()?.sortedByDescending { it.lastModified() } ?: emptyList()
 
         setupRecyclerView()
+    }
 
+    private fun setupToolbar() {
+        (requireActivity() as AppCompatActivity).setSupportActionBar(binding.galleryToolbar)
+        binding.galleryToolbar.setNavigationIcon(R.drawable.ic_close)
         binding.galleryToolbar.setNavigationOnClickListener {
-            requireActivity().onBackPressedDispatcher.onBackPressed()
+            findNavController().popBackStack()
         }
     }
 
@@ -50,7 +57,6 @@ class GalleryFragment : Fragment() {
         val action = GalleryFragmentDirections.actionGalleryFragmentToFullscreenFragment(file.absolutePath)
         findNavController().navigate(action)
     }
-
 
     private fun onFileDelete(file: File) {
         if (file.delete()) {

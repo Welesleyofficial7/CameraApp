@@ -11,3 +11,4 @@
         android:background="@drawable/ic_camera"
         android:contentDescription="@string/take_photo" />
 </FrameLayout>
+

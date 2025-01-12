@@ -11,3 +11,4 @@
         android:src="@drawable/ic_video"
         android:contentDescription="@string/record_video" />
 </FrameLayout>
+

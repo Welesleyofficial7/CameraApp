@@ -9,6 +9,8 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -65,6 +67,15 @@ class CameraFragment : Fragment() {
                 ).show()
             }
         }
+    private var elapsedSeconds = 0
+    private val handler = Handler(Looper.getMainLooper())
+    private val runnable = object : Runnable {
+        override fun run() {
+            binding.videoTimer.text = String.format("%02d:%02d", elapsedSeconds / 60, elapsedSeconds % 60)
+            elapsedSeconds++
+            handler.postDelayed(this, 1000)
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -297,22 +308,14 @@ class CameraFragment : Fragment() {
         }
     }
 
-    private var timer: CountDownTimer? = null
-
     private fun startTimer() {
-        val startTime = System.currentTimeMillis()
-        timer = object : CountDownTimer(Long.MAX_VALUE, 1000) {
-            override fun onTick(millisUntilFinished: Long) {
-                val elapsedSeconds = (System.currentTimeMillis() - startTime) / 1000
-                binding.videoTimer.text = String.format("%02d:%02d", elapsedSeconds / 60, elapsedSeconds % 60)
-            }
-
-            override fun onFinish() {}
-        }.start()
+        elapsedSeconds = 0
+        binding.videoTimer.text = "00:00"
+        handler.post(runnable)
     }
 
     private fun stopTimer() {
-        timer?.cancel()
+        handler.removeCallbacks(runnable)
     }
 
 
@@ -336,6 +339,7 @@ class CameraFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        stopTimer()
         imageCaptureExecutor.shutdown()
     }
 }
